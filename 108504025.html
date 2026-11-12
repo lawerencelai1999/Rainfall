@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>臺灣雨量觀測｜測站比較</title><script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f4ef;color:#172e32;font:16px/1.55 "Noto Sans TC","Microsoft JhengHei",sans-serif}header{background:#103d43;color:#fff;border-bottom:5px solid #9dd3b5}main,.wrap{width:min(1180px,94%);margin:auto}.wrap{padding:24px 0 30px}.mast{display:flex;align-items:center;gap:10px;color:#cfebe1;letter-spacing:.08em;font-weight:bold}.icon{display:inline-block;width:16px;height:21px;background:#9ddac5;border-radius:90% 10% 65% 40%;transform:rotate(-25deg)}h1{font-size:clamp(30px,4vw,52px);letter-spacing:.035em;line-height:1.2;margin:22px 0 9px}header p{margin:0;color:#d1e6df}.time{margin-left:auto;font:14px/1.4 monospace;letter-spacing:0}main{padding:20px 0 35px}.controls,article,details{background:#fff;border:1px solid #cbd5cf;border-radius:12px}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:18px 32px;padding:14px 21px}.controls label{display:flex;align-items:center;gap:12px}select{font:inherit;color:inherit;border:1px solid #9db2ab;border-radius:6px;background:#fff;padding:6px 10px;max-width:100%}.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;margin:18px 0}.grid article{padding:22px;min-width:0}h2,h3,p{margin:0}h2{font-size:23px}.sub,small,footer{color:#4b6360}.sub{font-size:14px;margin:5px 0 12px}.count{margin-left:auto;font-size:14px}.key{font-size:13px;color:#316451;font-weight:bold;letter-spacing:.07em}.detailhead{border-bottom:1px solid #dce5df;padding:10px 0 14px}.reading{font-size:36px;line-height:1.2;font-weight:700;margin-top:9px}.reading small{font-size:16px}#detailChart svg,#ranking svg{display:block;width:100%;height:auto}svg text{font-family:inherit;fill:#243e40}g[role=button]{cursor:pointer}g[role=button]:hover .back,g[role=button]:focus .back{stroke:#256e61;stroke-width:2}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #9c521d;outline-offset:2px}.stationPick{display:block;margin:12px 0}.stationPick select{display:block;width:100%;margin-top:5px}.note{font-size:14px;background:#edf5ef;border-radius:6px;padding:10px 12px}.details-title{font-size:15px;margin-top:15px}details{margin-top:10px;padding:12px 18px}summary{font-weight:bold;cursor:pointer}details p,details table{margin-top:10px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:7px;border-bottom:1px solid #d9e1dc;text-align:left}a{color:#185e53}footer{margin-top:14px;font-size:13px}.error{color:#933d23} @media(max-width:760px){.grid{grid-template-columns:1fr}.controls{gap:10px}.count{margin-left:0}.time{font-size:12px}.grid article{padding:16px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><div class="wrap"><div class="mast"><i class="icon" aria-hidden="true"></i> 降雨觀測 <span class="time">2026.11.12 ／ 19:00 臺灣時間</span></div><h1>臺灣測站雨量比較</h1><p>從近 24 小時縮短到近 1 小時，哪些測站仍排在前面？</p></div></header>
+<main><section class="controls" aria-label="排名篩選"><label>縣市<select id="county"><option value="">全臺</option></select></label><label>累積時窗<select id="period"></select></label><span class="count" id="scope" role="status">載入資料中…</span></section>
+<div class="grid"><article><div class="key" id="context">全臺</div><h2>測站雨量排名</h2><p class="sub">顯示前 10 站。點選一列，或用 Tab 與 Enter 查看測站。</p><div id="ranking"></div><small>雨量相同者並列，同值依測站代碼順序顯示。</small></article>
+<article><div class="key">測站詳情</div><label class="stationPick">查看測站<select id="station"></select></label><div class="detailhead" aria-live="polite"><h2 id="name"></h2><p id="location"></p><div class="reading"><span id="value">—</span> <small>mm</small></div><p id="position"></p></div><h3 class="details-title">各時窗累積雨量（mm）</h3><div id="detailChart"></div><p class="note" id="share"></p></article></div>
+<details><summary>互動設計說明</summary><p>我想知道某個測站在近二十四小時累積了較多雨量，縮短到近一小時後，它是否仍排在同一縣市的前面。依照 Shneiderman 的概覽、篩選與按需查看細節原則，畫面先列出全臺雨量最高的十個測站。讀者可以選擇縣市來界定比較對象，再切換累積時窗，觀察同一站的名次如何改變。點選排名中的測站後，右圖會並列該站五種時窗的累積量；切換時窗時也會保留選站，即使它跌出前十，仍可追蹤。縮放只能改變圖面範圍，無法重算名次。這裡使用篩選搭配選站，讓每次操作都能回答同一個比較問題。</p></details>
+<details><summary>資料與範例改寫對照</summary><p>每列為一個測站，欄位包含代碼、站名、縣市、鄉鎮、觀測時間及五個累積時窗。各時窗皆截至同一觀測時刻，範圍彼此重疊，不能相加。0 mm 表示觀測值為零。</p><table><thead><tr><th>參考做法</th><th>本作品的改寫</th></tr></thead><tbody><tr><td>多視圖連動</td><td>以測站代碼保存選取狀態，同步更新排名標記、名次與時窗比較圖。</td></tr><tr><td>範例使用 D3 v6</td><td>改以 CDN 載入 v7.9.0，事件使用兩版共通的 (event, datum) 參數，並為點選加入 Enter 與空白鍵操作。</td></tr></tbody></table><p><a href="https://github.com/UBC-InfoVis/447-materials/tree/26Jan/d3-examples/d3-linked-charts-basic" target="_blank" rel="noreferrer">UBC CPSC 447 · d3-linked-charts-basic</a></p></details>
+<footer>資料來源｜中央氣象署 O-A0002-001　·　2026 年 11 月 12 日 19:00 觀測快照</footer></main>
+<script>
+const el=id=>document.getElementById(id);
+const periods=[1,3,6,12,24], label=h=>'近 '+h+' 小時', fmt=n=>Number(n).toFixed(1);
+let rows=[], ranked=[], selected='', hours=24;
+function options(node,data,value,caption){
+ d3.select(node).selectAll('option').data(data,value).join('option').attr('value',value).text(caption);
+}
+function showStation(id){
+ selected=id;el('station').value=id;
+ const s=ranked.find(r=>r.id===id), key='h'+hours;
+ d3.select('#ranking').selectAll('.entry').attr('aria-pressed',d=>d.id===id)
+ .each(function(d){const g=d3.select(this), active=d.id===id;
+ g.select('.back').attr('fill',active?'#e1f1e8':'transparent');
+ g.select('.marker').text(active?'◆':'');});
+ el('name').textContent=s.station;el('location').textContent=s.county+' · '+s.town+' ／ '+s.id;
+ el('value').textContent=fmt(s[key]);el('position').textContent=label(hours)+' · '+(el('county').value||'全臺')+'第 '+s.rank+' 名／'+ranked.length+' 站';
+ const svg=d3.select('#detailChart').selectAll('svg').data([null]).join('svg').attr('viewBox','0 0 380 170').attr('role','img')
+ .attr('aria-label',periods.map(h=>label(h)+' '+fmt(s['h'+h])+' 毫米').join('，'));
+ const scale=d3.scaleLinear().domain([0,s.h24||1]).range([0,223]);
+ const g=svg.selectAll('g').data(periods).join('g').attr('transform',(h,i)=>'translate(0,'+(15+32*i)+')');g.selectAll('*').remove();
+ g.append('text').attr('x',0).attr('y',5).attr('font-size',14).text(h=>(h===hours?'◆ ':'')+h+' 小時');
+ g.append('rect').attr('x',85).attr('y',-5).attr('width',223).attr('height',10).attr('fill','#edf2ef');
+ g.append('rect').attr('x',85).attr('y',-5).attr('width',h=>scale(s['h'+h])).attr('height',10).attr('fill',h=>h===hours?'#245e57':'#82ad9b');
+ g.append('text').attr('x',374).attr('y',5).attr('text-anchor','end').attr('font-size',14).text(h=>fmt(s['h'+h]));
+ el('share').textContent=s.h24?'近 1 小時雨量占近 24 小時累積量的 '+d3.format('.1%')(s.h1/s.h24)+'。':'近 24 小時累積雨量為零，無法計算近 1 小時占比。';
+}
+function refresh(){
+ hours=Number(el('period').value);const county=el('county').value,key='h'+hours;
+ ranked=rows.filter(s=>!county||s.county===county).sort((a,b)=>b[key]-a[key]||d3.ascending(a.id,b.id));
+ ranked.forEach((s,i)=>s.rank=i&&s[key]===ranked[i-1][key]?ranked[i-1].rank:i+1);
+ const top=ranked.slice(0,10);
+ el('scope').textContent=ranked.length.toLocaleString()+' 個測站參與比較';el('context').textContent=(county||'全臺')+' ／ '+label(hours);
+ options(el('station'),ranked,s=>s.id,s=>s.station+'（'+s.id+'）');
+ const W=620,start=185,end=550,H=top.length*36+58;
+ const svg=d3.select('#ranking').selectAll('svg').data([null]).join('svg').attr('viewBox','0 0 '+W+' '+H).attr('role','group').attr('aria-label','累積雨量排名，單位毫米');
+ const x=d3.scaleLinear().domain([0,top[0][key]||1]).nice(5).range([start,end]);
+ svg.selectAll('.axis').data([null]).join('g').attr('class','axis').attr('transform','translate(0,28)').call(d3.axisTop(x).ticks(5).tickSize(-top.length*36-8)).call(g=>g.select('.domain').remove()).call(g=>g.selectAll('line').attr('stroke','#d8e3dd')).call(g=>g.selectAll('text').attr('font-size',12));
+ svg.selectAll('.unit').data([null]).join('text').attr('class','unit').attr('x',580).attr('y',20).attr('font-size',13).text('mm');
+ const g=svg.selectAll('.entry').data(top,s=>s.id).join('g').attr('class','entry').attr('transform',(s,i)=>'translate(0,'+(50+36*i)+')').attr('role','button').attr('tabindex',0)
+ .attr('aria-label',s=>'第 '+s.rank+' 名，'+s.county+s.station+'，'+fmt(s[key])+' 毫米').on('click',(e,s)=>showStation(s.id)).on('keydown',(e,s)=>{if(['Enter',' '].includes(e.key)){e.preventDefault();showStation(s.id);}});
+ g.selectAll('*').remove();g.append('rect').attr('class','back').attr('x',2).attr('y',-16).attr('width',615).attr('height',32).attr('rx',5);
+ g.append('text').attr('class','marker').attr('x',7).attr('y',5).attr('font-size',11);
+ g.append('text').attr('x',23).attr('y',5).attr('font-size',14).text(s=>s.rank);
+ g.append('text').attr('x',48).attr('y',-1).attr('font-size',15).attr('font-weight',650).text(s=>s.station);
+ g.append('text').attr('x',48).attr('y',13).attr('font-size',11).text(s=>s.county);
+ g.append('rect').attr('x',start).attr('y',-5).attr('width',s=>x(s[key])-start).attr('height',10).attr('fill','#3e8271');
+ g.append('text').attr('x',607).attr('y',5).attr('text-anchor','end').attr('font-size',15).text(s=>fmt(s[key]));
+ showStation(ranked.some(s=>s.id===selected)?selected:top[0].id);
+}
+async function init(){
+ try{if(!window.d3)throw Error('cdn');rows=await d3.csv('rainfall.csv',r=>{for(const h of periods)r['h'+h]=Number(r['h'+h]);return r;});
+ options(el('county'),['',...new Set(rows.map(s=>s.county).sort((a,b)=>a.localeCompare(b,'zh-Hant')))],d=>d,d=>d||'全臺');
+ options(el('period'),periods,d=>d,label);el('period').value='24';refresh();
+ el('period').onchange=refresh;el('county').onchange=refresh;el('station').onchange=e=>showStation(e.target.value);
+ }catch(error){el('scope').className='error';el('scope').textContent=window.d3?'無法載入 rainfall.csv，請確認已將資料檔一併匯入模板。':'無法載入 D3，請確認可連線至 CDN 後重新整理。';}
+}init();
+</script></body></html>
