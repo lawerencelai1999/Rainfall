@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>雨量觀測站｜台灣降雨互動分析</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">TAIWAN RAINFALL INTELLIGENCE</div>
+        <h1>雨量觀測站 <span>／</span> 台灣降雨互動分析</h1>
+        <p class="subtitle">從測站位置、區域差異與累積時間，探索全台降雨分布</p>
+      </div>
+      <div class="stamp"><span class="live-dot"></span><span id="obsTime">載入觀測時間…</span></div>
+    </header>
+
+    <section class="control-panel" aria-label="資料篩選控制">
+      <label>降雨累積時間
+        <select id="periodSelect">
+          <option value="Now">目前</option>
+          <option value="Past10Min">過去 10 分鐘</option>
+          <option value="Past1hr">過去 1 小時</option>
+          <option value="Past3hr">過去 3 小時</option>
+          <option value="Past6hr">過去 6 小時</option>
+          <option value="Past12hr">過去 12 小時</option>
+          <option value="Past24hr" selected>過去 24 小時</option>
+          <option value="Past2days">過去 2 天</option>
+          <option value="Past3days">過去 3 天</option>
+        </select>
+      </label>
+      <label>縣市
+        <select id="countySelect"><option value="全部">全台灣</option></select>
+      </label>
+      <button id="resetBtn" class="reset-btn" type="button">重設篩選</button>
+      <div class="filter-note">可在下方分布圖拖曳選取降雨量範圍</div>
+    </section>
+
+    <section class="kpis" aria-label="目前篩選結果摘要">
+      <article class="kpi"><div class="kpi-label">符合條件測站</div><div class="kpi-value" id="stationCount">—</div><div class="kpi-foot">Stations</div></article>
+      <article class="kpi"><div class="kpi-label">平均降雨量</div><div class="kpi-value" id="meanRain">—</div><div class="kpi-foot">毫米（mm）</div></article>
+      <article class="kpi"><div class="kpi-label">最高測站雨量</div><div class="kpi-value" id="maxRain">—</div><div class="kpi-foot" id="maxStation">—</div></article>
+      <article class="kpi"><div class="kpi-label">有降雨測站</div><div class="kpi-value" id="wetCount">—</div><div class="kpi-foot" id="wetRate">—</div></article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel map-panel">
+        <div class="panel-head"><div><div class="section-index">01 / SPATIAL DISTRIBUTION</div><h2>全台測站降雨分布</h2><p>依測站經緯度呈現位置；圓點越大代表降雨量越高</p></div><div class="legend"><span class="legend-dot low"></span>低 <span class="legend-dot high"></span>高</div></div>
+        <svg id="mapChart" role="img" aria-label="台灣各地雨量測站地理位置散點圖，圓點大小表示降雨量"></svg>
+        <div class="chart-foot">提示：點選圓點或使用 Tab 鍵聚焦測站，可查看測站詳細資料。</div>
+      </article>
+
+      <article class="panel county-panel">
+        <div class="panel-head"><div><div class="section-index">02 / COUNTY COMPARISON</div><h2>縣市降雨量比較</h2><p>各縣市測站平均降雨量，依高至低排序</p></div></div>
+        <svg id="countyChart" role="img" aria-label="各縣市平均降雨量水平長條圖"></svg>
+      </article>
+
+      <article class="panel hist-panel">
+        <div class="panel-head"><div><div class="section-index">03 / RAINFALL DISTRIBUTION</div><h2>測站降雨量分布</h2><p>拖曳區間可篩選測站，並連動上方圖表</p></div><button id="clearBrush" class="small-btn" type="button">清除區間</button></div>
+        <svg id="histChart" role="img" aria-label="測站降雨量直方圖，可拖曳選取降雨量範圍"></svg>
+        <div class="selection-readout" id="brushReadout">目前未限制降雨量範圍</div>
+      </article>
+
+      <aside class="panel detail-panel" aria-live="polite">
+        <div class="section-index">04 / STATION DETAILS</div><h2>測站詳細資訊</h2>
+        <div id="stationDetail" class="detail-empty">選取地圖上的測站，即可查看詳細觀測資訊。</div>
+      </aside>
+    </section>
+
+    <footer>
+      <div><strong>資料來源</strong>：中央氣象署開放資料平台（O-A0002-001）及其他資料維護機構測站觀測資料。</div>
+      <div>本頁使用單一觀測時間快照；累積時間欄位代表該觀測時刻往前累計，並非多年歷史序列。</div>
+    </footer>
+  </main>
+  <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
